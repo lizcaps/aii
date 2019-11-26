@@ -30,7 +30,7 @@ timedatectl set-ntp true
 # -- Create Partition --
 sfdisk /dev/"$INSTALL_DRIVE" -uS <<EOF
 ,$(($ROOT_SIZE*1024*1024*1024/512))
-$(($SWAP_SIZE*1024*1024*1024/512))
+,$(($SWAP_SIZE*1024*1024*1024/512))
 ;
 EOF
 mkfs.ext4 '/dev/'$INSTALL_DRIVE'1'
@@ -44,14 +44,12 @@ swapon '/dev/'$INSTALL_DRIVE'2'
 read -n 1 -s -r -p "Press any key to continue ..."
 # -- Install Base Packages --
 reflector -c "$COUNTRY_LOCATION" -f 12 -l 12 --verbose --save /etc/pacman.d/mirrorlist
-pacstrap /mnt base base-devel linux linux-firmware lvm2 \
-grub efibootmgr \
-wpa_supplicant wireless_tools networkmanager \
-pulseaudio openssh openvpn acpilight\
-nano git htop neofetch wget curl noto-fonts man \
-sway xorg-server-xwayland swaylock swaybg waybar dmenu pavucontrol \
-atom rxvt-unicode firefox-developer-edition discord\
-libreoffice-fresh
+pacstrap /mnt base base-devel linux linux-firmware \
+grub \
+pulseaudio openssh openvpn acpilight \
+vim git htop wget curl noto-fonts man \
+i3 dmenu pavucontrol \
+atom rxvt-unicode firefox-developer-edition discord \
 #zsh zsh-theme-powerlevel9k awesome-terminal-fonts
 read -n 1 -s -r -p "Press any key to continue ..."
 
