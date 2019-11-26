@@ -29,21 +29,19 @@ loadkeys "$KEYMAP"
 timedatectl set-ntp true
 # -- Create Partition --
 sfdisk /dev/"$INSTALL_DRIVE" -uS <<EOF
-,$(($BOOT_SIZE*1024*1024/512))
 ,$(($ROOT_SIZE*1024*1024*1024/512))
 $(($SWAP_SIZE*1024*1024*1024/512))
 ;
 EOF
-mkfs.fat -F32 /dev/"$INSTALL_DRIVE""$DRIVE_NUMERATION_PREFIX"1
-#loading english keyboard to simplify grub core building
+mkfs.ext4 '/dev/'$INSTALL_DRIVE'1'
+mkfs.ext4 '/dev/'$INSTALL_DRIVE'3'
+mkswap '/dev/'$INSTALL_DRIVE'2'
 mount '/dev/'$INSTALL_DRIVE'1' /mnt
 mkdir /mnt/home
-mount '/dev/'$INSTALL_DRIVE'1' /mnt/home
-mkdir /mnt/boot
-mount -t vfat '/dev/'$INSTALL_DRIVE'1' /mnt/boot
-swapon /dev/mapper/archvg-swap
-read -n 1 -s -r -p "Press any key to continue ..."
+mount '/dev/'$INSTALL_DRIVE'3' /mnt/home
+swapon '/dev/'$INSTALL_DRIVE'2'
 
+read -n 1 -s -r -p "Press any key to continue ..."
 # -- Install Base Packages --
 reflector -c "$COUNTRY_LOCATION" -f 12 -l 12 --verbose --save /etc/pacman.d/mirrorlist
 pacstrap /mnt base base-devel linux linux-firmware lvm2 \
