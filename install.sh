@@ -55,7 +55,7 @@ read -n 1 -s -r -p "Press any key to continue ..."
 
 # -- Generate fstab --
 genfstab -U -p /mnt >> /mnt/etc/fstab
-sed -i 's|filesystems keyboard|keyboard encrypt lvm2 filesystems|g' /mnt/etc/mkinitcpio.conf
+#sed -i 's|filesystems keyboard|keyboard encrypt lvm2 filesystems|g' /mnt/etc/mkinitcpio.conf
 arch-chroot /mnt mkinitcpio -p linux
 
 # -- Setup Locales --
@@ -86,7 +86,7 @@ arch-chroot /mnt chmod a+x /etc/grub.d/31_hold_shift
 grub-install --target=i386-pc /dev/sda
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 arch-chroot /mnt mkdir /boot/EFI/boot
-arch-chroot /mnt cp /boot/EFI/grub_uefi/grubx64.efi /boot/EFI/boot/bootx64.efi
+#arch-chroot /mnt cp /boot/EFI/grub_uefi/grubx64.efi /boot/EFI/boot/bootx64.efi
 read -n 1 -s -r -p "Press any key to continue ..."
 
 # -- Create new user and setup passwords --
@@ -102,7 +102,7 @@ echo "-- $USERNAME --"
 arch-chroot /mnt passwd $USERNAME
 
 # -- Configure --
-arch-chroot /mnt cp /home/"$USERNAME"/"$INSTALL_FOLDER"/ressources/grubBackground.jpg /boot/grub/themes/background.jpg
+#arch-chroot /mnt cp /home/"$USERNAME"/"$INSTALL_FOLDER"/ressources/grubBackground.jpg /boot/grub/themes/background.jpg
 
 echo "     ------ INSTALLATION DONE ------"
 echo "You should check if everything went right."
