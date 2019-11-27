@@ -36,10 +36,10 @@ EOF
 mkfs.ext4 '/dev/'$INSTALL_DRIVE'1'
 mkfs.ext4 '/dev/'$INSTALL_DRIVE'3'
 mkswap '/dev/'$INSTALL_DRIVE'2'
+swapon '/dev/'$INSTALL_DRIVE'2'
 mount '/dev/'$INSTALL_DRIVE'1' /mnt
 mkdir /mnt/home
 mount '/dev/'$INSTALL_DRIVE'3' /mnt/home
-swapon '/dev/'$INSTALL_DRIVE'2'
 
 read -n 1 -s -r -p "Press any key to continue ..."
 # -- Install Base Packages --
@@ -48,7 +48,7 @@ pacstrap /mnt base base-devel linux linux-firmware \
 grub \
 pulseaudio openssh openvpn acpilight \
 vim git htop wget curl noto-fonts man \
-i3 dmenu pavucontrol \
+xorg-server xorg-server-utils xorg-xinit i3 dmenu pavucontrol \
 atom rxvt-unicode firefox-developer-edition discord \
 #zsh zsh-theme-powerlevel9k awesome-terminal-fonts
 read -n 1 -s -r -p "Press any key to continue ..."
@@ -79,14 +79,12 @@ read -n 1 -s -r -p "Press any key to continue ..."
 #arch-chroot /mnt systemctl start NetworkManager.service
 
 # -- Grub Install --
-sed -i 's|\([[:blank:]]*\)insmod gfxterm|\1insmod gfxterm\n\1insmod gfxterm_background|g' /mnt/etc/grub.d/00_header
-echo 'GRUB_BACKGROUND="/boot/grub/themes/background.jpg"' >> /mnt/etc/default/grub
-echo 'GRUB_FORCE_HIDDEN_MENU="true"' >> /mnt/etc/default/grub
-arch-chroot /mnt chmod a+x /etc/grub.d/31_hold_shift
-grub-install --target=i386-pc /dev/sda
+#sed -i 's|\([[:blank:]]*\)insmod gfxterm|\1insmod gfxterm\n\1insmod gfxterm_background|g' /mnt/etc/grub.d/00_header
+#echo 'GRUB_BACKGROUND="/boot/grub/themes/background.jpg"' >> /mnt/etc/default/grub
+#echo 'GRUB_FORCE_HIDDEN_MENU="true"' >> /mnt/etc/default/grub
+#arch-chroot /mnt chmod a+x /etc/grub.d/31_hold_shift
+arch-chroot /mnt grub-install --target=i386-pc /dev/sda
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-arch-chroot /mnt mkdir /boot/EFI/boot
-#arch-chroot /mnt cp /boot/EFI/grub_uefi/grubx64.efi /boot/EFI/boot/bootx64.efi
 read -n 1 -s -r -p "Press any key to continue ..."
 
 # -- Create new user and setup passwords --
