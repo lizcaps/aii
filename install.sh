@@ -47,8 +47,8 @@ reflector -c "$COUNTRY_LOCATION" -f 12 -l 12 --verbose --save /etc/pacman.d/mirr
 pacstrap /mnt base base-devel linux linux-firmware
 arch-chroot /mnt pacman --noconfirm -Sy grub \
 pulseaudio openssh openvpn acpilight \
-vim git htop wget curl noto-fonts man xterm\
-xorg-server xorg-xinit  \
+vim git htop wget curl noto-fonts man xterm \
+xorg xorg-server xorg-xinit  \
 i3-gaps i3lock i3status i3blocks dmenu pavucontrol \
 atom rxvt-unicode firefox-developer-edition discord \
 #zsh zsh-theme-powerlevel9k awesome-terminal-fonts
@@ -56,7 +56,7 @@ atom rxvt-unicode firefox-developer-edition discord \
 # -- Generate fstab --
 genfstab -U -p /mnt >> /mnt/etc/fstab
 #sed -i 's|filesystems keyboard|keyboard encrypt lvm2 filesystems|g' /mnt/etc/mkinitcpio.conf
-arch-chroot /mnt mkinitcpio -p linux
+#arch-chroot /mnt mkinitcpio -p linux
 
 # -- Setup Locales --
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
