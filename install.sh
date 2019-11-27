@@ -43,12 +43,13 @@ mount '/dev/'$INSTALL_DRIVE'3' /mnt/home
 
 read -n 1 -s -r -p "Press any key to continue ..."
 # -- Install Base Packages --
+# add network
 reflector -c "$COUNTRY_LOCATION" -f 12 -l 12 --verbose --save /etc/pacman.d/mirrorlist
-pacstrap /mnt base base-devel linux linux-firmware \
-grub \
+pacstrap /mnt base base-devel linux linux-firmware
+arch-chroot /mnt pacman -Sy grub \
 pulseaudio openssh openvpn acpilight \
 vim git htop wget curl noto-fonts man \
-xorg-server xorg-server-utils xorg-xinit i3 dmenu pavucontrol \
+xorg-server xorg-xinit i3-wm dmenu pavucontrol \
 atom rxvt-unicode firefox-developer-edition discord \
 #zsh zsh-theme-powerlevel9k awesome-terminal-fonts
 read -n 1 -s -r -p "Press any key to continue ..."
