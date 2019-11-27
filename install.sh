@@ -46,7 +46,7 @@ mount '/dev/'$INSTALL_DRIVE'3' /mnt/home
 reflector -c "$COUNTRY_LOCATION" -f 12 -l 12 --verbose --save /etc/pacman.d/mirrorlist
 pacstrap /mnt base base-devel linux linux-firmware
 arch-chroot /mnt pacman --noconfirm -Sy grub \
-pulseaudio openssh openvpn acpilight \
+pulseaudio openssh openvpn acpilight dhcp \
 vim git htop wget curl noto-fonts man xterm \
 xorg xorg-server xorg-xinit  \
 i3-gaps i3lock i3status i3blocks dmenu pavucontrol \
@@ -72,11 +72,15 @@ echo "::1 localhost" >> /mnt/etc/hosts
 echo "127.0.0.1 $COMPUTER_NAME.localdomain $COMPUTER_NAME" >> /mnt/etc/hosts
 
 # -- Setup nework with NetworkManager --
-#arch-chroot /mnt systemctl enable NetworkManager.service
-#arch-chroot /mnt systemctl disable dhcpcd.service
-#arch-chroot /mnt systemctl enable wpa_supplicant.service
-#arch-chroot /mnt systemctl start NetworkManager.service
+arch-chroot /mnt echo "[Match]" >> /etc/systemd/network/enp0s3.network
+arch-chroot /mnt echo "name=en*" >> /etc/systemd/network/enp0s3.network
+arch-chroot /mnt echo "[Network]" >> /etc/systemd/network/enp0s3.network
+arch-chroot /mnt echo "DHCP=yes" >> /etc/systemd/network/enp0s3.network
+arch-chroot /mnt systemctl restart systemd-networkd
+arch-chroot /mnt systemctl enable systemd-networkd
 
+arch-chroot /mnt echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+arch-chroot /mnt echo "nameserver 8.8.4.4" >> /etc/resolv.conf
 # -- Grub Install --
 #sed -i 's|\([[:blank:]]*\)insmod gfxterm|\1insmod gfxterm\n\1insmod gfxterm_background|g' /mnt/etc/grub.d/00_header
 #echo 'GRUB_BACKGROUND="/boot/grub/themes/background.jpg"' >> /mnt/etc/default/grub
