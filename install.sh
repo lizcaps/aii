@@ -20,10 +20,10 @@ SWAP_SIZE=2
 LANGUAGE="en_US.UTF8"
 KEYMAP="fr"
 COUNTRY_LOCATION="France"
-DATA_REPOSITORY="https://github.com/lizcaps/Home.git"
-DATA_INSTALL_FOLDER=".env/Home"
-CONFIG_REPOSITORY="https://github.com/lizcaps/aii.git"
-CONFIG_FOLDER=".env/asi"
+HOME_INSTALL_REPOSITORY="https://github.com/lizcaps/Home.git"
+HOME_INSTALL_FOLDER=".env/Home"
+INSTALL_REPOSITORY="https://github.com/lizcaps/aii.git"
+INSTALL_FOLDER=".env/asi"
 
 loadkeys "$KEYMAP"
 timedatectl set-ntp true
@@ -41,18 +41,17 @@ mount '/dev/'$INSTALL_DRIVE'1' /mnt
 mkdir /mnt/home
 mount '/dev/'$INSTALL_DRIVE'3' /mnt/home
 
-read -n 1 -s -r -p "Press any key to continue ..."
 # -- Install Base Packages --
 # add network
 reflector -c "$COUNTRY_LOCATION" -f 12 -l 12 --verbose --save /etc/pacman.d/mirrorlist
 pacstrap /mnt base base-devel linux linux-firmware
-arch-chroot /mnt pacman -Sy grub \
+arch-chroot /mnt pacman --noconfirm -Sy grub \
 pulseaudio openssh openvpn acpilight \
-vim git htop wget curl noto-fonts man \
-xorg-server xorg-xinit i3-wm dmenu pavucontrol \
+vim git htop wget curl noto-fonts man xterm\
+xorg-server xorg-xinit  \
+i3-gaps i3lock i3status i3blocks dmenu pavucontrol \
 atom rxvt-unicode firefox-developer-edition discord \
 #zsh zsh-theme-powerlevel9k awesome-terminal-fonts
-read -n 1 -s -r -p "Press any key to continue ..."
 
 # -- Generate fstab --
 genfstab -U -p /mnt >> /mnt/etc/fstab
@@ -71,7 +70,6 @@ echo "$COMPUTER_NAME" > /mnt/etc/hostname
 echo "127.0.0.1 localhost" >> /mnt/etc/hosts
 echo "::1 localhost" >> /mnt/etc/hosts
 echo "127.0.0.1 $COMPUTER_NAME.localdomain $COMPUTER_NAME" >> /mnt/etc/hosts
-read -n 1 -s -r -p "Press any key to continue ..."
 
 # -- Setup nework with NetworkManager --
 #arch-chroot /mnt systemctl enable NetworkManager.service
@@ -86,16 +84,14 @@ read -n 1 -s -r -p "Press any key to continue ..."
 #arch-chroot /mnt chmod a+x /etc/grub.d/31_hold_shift
 arch-chroot /mnt grub-install --target=i386-pc /dev/sda
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-read -n 1 -s -r -p "Press any key to continue ..."
 
 # -- Create new user and setup passwords --
 arch-chroot /mnt groupadd sudo
 echo "%sudo ALL=(ALL) ALL" >> /mnt/etc/sudoers
 arch-chroot /mnt useradd -m -G sudo -s /bin/bash $USERNAME
-arch-chroot /mnt su $USERNAME -c "git clone $INSTALL_REPOSITORY /home/'$USERNAME'/'$INSTALL_FOLDER'"
-if [ -n "$DATA_INSTALL_FOLDER" && -n "$DATA_REPOSITORY" ]; then
-  arch-chroot /mnt su $USERNAME -c "git clone $DATA_REPOSITORY /home/'$USERNAME'/'$DATA_INSTALL_FOLDER'"
-fi
+arch-chroot /mnt su $USERNAME -c "cd ~/ && mkdir .env"
+arch-chroot /mnt su $USERNAME -c "git clone $INSTALL_REPOSITORY ~/$INSTALL_FOLDER"
+arch-chroot /mnt su $USERNAME -c "git clone $HOME_INSTALL_REPOSITORY ~/$HOME_INSTALL_FOLDER"
 arch-chroot /mnt passwd -l root
 echo "-- $USERNAME --"
 arch-chroot /mnt passwd $USERNAME
